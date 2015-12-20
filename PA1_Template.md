@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
@@ -12,6 +7,22 @@ First load the libraries needed in this assessment
 
 ```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(lubridate)
 library(lattice)
 ```
@@ -38,7 +49,7 @@ act_per_day <- summarize(activity2,steps_per_day = sum(steps))
 hist(act_per_day$steps_per_day)
 ```
 
-![plot of chunk first_hist](figure/first_hist-1.png) 
+![](PA1_template_files/figure-html/first_hist-1.png) 
 
 Calculate and report the mean and median of the total number of steps taken per day
 
@@ -71,7 +82,7 @@ act_by_time <- summarize(activity3,steps_by_time = mean(steps))
 plot(act_by_time,type="l")
 ```
 
-![plot of chunk first_time_series](figure/first_time_series-1.png) 
+![](PA1_template_files/figure-html/first_time_series-1.png) 
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -131,7 +142,7 @@ act_per_day2 <- summarize(activity_all,steps_per_day = sum(steps))
 hist(act_per_day2$steps_per_day)
 ```
 
-![plot of chunk second_hist](figure/second_hist-1.png) 
+![](PA1_template_files/figure-html/second_hist-1.png) 
 
 Calculate and report the mean and median total number of steps taken per day.
 
@@ -193,5 +204,5 @@ activity_weekend <- summarize(activity_all,steps = mean(steps))
 xyplot(steps~interval|weekend,activity_weekend,type="l")
 ```
 
-![plot of chunk second_time_series](figure/second_time_series-1.png) 
+![](PA1_template_files/figure-html/second_time_series-1.png) 
 
