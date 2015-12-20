@@ -32,16 +32,18 @@ of the results
 ```{r first_hist,echo=TRUE}
 activity2 <- group_by(activity2,date)
 act_per_day <- summarize(activity2,steps_per_day = sum(steps))
-hist(act_per_day$steps_per_day)
+hist(act_per_day$steps_per_day,main="Histogram of Total Steps per Day",xlab = "Total Steps per Day")
 ```
 
 Calculate and report the mean and median of the total number of steps taken per day
 
 ```{r,echo=TRUE}
-mean(act_per_day$steps_per_day)
-median(act_per_day$steps_per_day)
+mn <- mean(act_per_day$steps_per_day)
+med <- median(act_per_day$steps_per_day)
 ```
 
+The mean steps per day is `r mn`.
+The median steps per day is `r med`.
 
 ## What is the average daily activity pattern?
 Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -57,9 +59,11 @@ Which 5-minute interval, on average across all the days in the dataset, contains
 
 
 ```{r,echo=TRUE}
-act_by_time$interval[act_by_time$steps_by_time==max(act_by_time$steps_by_time)]
+max_start <-act_by_time$interval[act_by_time$steps_by_time==max(act_by_time$steps_by_time)]
+max_fin <- max_start + 5
 ```
 
+The period with the maximum number of steps is between `r max_start` and `r max_fin` minutes
 
 
 ## Imputing missing values
@@ -69,8 +73,11 @@ Calculate and report the total number of missing values in the dataset
 ```{r,echo=TRUE}
 activity_na <- filter(activity,is.na(steps)==TRUE)
 activity_good <- filter(activity,is.na(steps)==FALSE)
-nrow(activity_na)
+missing <- nrow(activity_na)
 ```
+
+There are `r missing` rows with missing values in the dataset
+
 
 Fill in the missing values by setting them equal to the mean for that 5 minute period over all days
 
@@ -90,27 +97,35 @@ activity_all <- rbind(activity_na,activity_good)
 activity_all <- arrange(activity_all,date,interval)
 ```
 
-Make a histogram of the total number of steps taken each day.
+Make a histogram of the total number of steps taken each day now that the missing values have been filled in.
 
 ```{r second_hist,echo=TRUE}
 activity_all <- group_by(activity_all,date)
 act_per_day2 <- summarize(activity_all,steps_per_day = sum(steps))
-hist(act_per_day2$steps_per_day)
+hist(act_per_day2$steps_per_day,main="Histogram of Total Steps per Day (Missing Values Replaced)",xlab = "Total Steps per Day")
 ```
 
 Calculate and report the mean and median total number of steps taken per day.
 
 ```{r,echo=TRUE}
-mean(act_per_day2$steps_per_day)
-median(act_per_day2$steps_per_day)
+mn2 <- mean(act_per_day2$steps_per_day)
+med2 <- median(act_per_day2$steps_per_day)
 ```
+
+The mean steps per day (now that missing values have been filled in) is `r mn2`.
+The median steps per day (now that missing values have been filled in) is `r med2`.
+
 
 Calculate the impact of imputing missing data on the estimates of the total daily number of steps by comparing with the previous means and medians we calculated.
 
 ```{r,echo=TRUE}
-mean(act_per_day2$steps_per_day) - mean(act_per_day$steps_per_day)
-median(act_per_day2$steps_per_day) - median(act_per_day$steps_per_day)
+diffmean <- mn2-mn
+diffmed <- med2 - med
 ```
+
+The difference in the means by filling in missing values is `r diffmean`. 
+The difference in the medians by filling in missing values is `r diffmed`
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

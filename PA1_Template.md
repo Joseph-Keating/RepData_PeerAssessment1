@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
 
 
 ## Loading and preprocessing the data
@@ -7,22 +12,6 @@ First load the libraries needed in this assessment
 
 ```r
 library(dplyr)
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-## 
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-## 
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
 library(lubridate)
 library(lattice)
 ```
@@ -46,30 +35,21 @@ of the results
 ```r
 activity2 <- group_by(activity2,date)
 act_per_day <- summarize(activity2,steps_per_day = sum(steps))
-hist(act_per_day$steps_per_day)
+hist(act_per_day$steps_per_day,main="Histogram of Total Steps per Day",xlab = "Total Steps per Day")
 ```
 
-![](PA1_template_files/figure-html/first_hist-1.png) 
+![plot of chunk first_hist](figure/first_hist-1.png) 
 
 Calculate and report the mean and median of the total number of steps taken per day
 
 
 ```r
-mean(act_per_day$steps_per_day)
+mn <- mean(act_per_day$steps_per_day)
+med <- median(act_per_day$steps_per_day)
 ```
 
-```
-## [1] 10766.19
-```
-
-```r
-median(act_per_day$steps_per_day)
-```
-
-```
-## [1] 10765
-```
-
+The mean steps per day is 1.0766189 &times; 10<sup>4</sup>.
+The median steps per day is 10765.
 
 ## What is the average daily activity pattern?
 Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -82,20 +62,18 @@ act_by_time <- summarize(activity3,steps_by_time = mean(steps))
 plot(act_by_time,type="l")
 ```
 
-![](PA1_template_files/figure-html/first_time_series-1.png) 
+![plot of chunk first_time_series](figure/first_time_series-1.png) 
 
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 
 
 ```r
-act_by_time$interval[act_by_time$steps_by_time==max(act_by_time$steps_by_time)]
+max_start <-act_by_time$interval[act_by_time$steps_by_time==max(act_by_time$steps_by_time)]
+max_fin <- max_start + 5
 ```
 
-```
-## [1] 835
-```
-
+The period with the maximum number of steps is between 835 and 840 minutes
 
 
 ## Imputing missing values
@@ -106,12 +84,11 @@ Calculate and report the total number of missing values in the dataset
 ```r
 activity_na <- filter(activity,is.na(steps)==TRUE)
 activity_good <- filter(activity,is.na(steps)==FALSE)
-nrow(activity_na)
+missing <- nrow(activity_na)
 ```
 
-```
-## [1] 2304
-```
+There are 2304 rows with missing values in the dataset
+
 
 Fill in the missing values by setting them equal to the mean for that 5 minute period over all days
 
@@ -133,54 +110,40 @@ activity_all <- rbind(activity_na,activity_good)
 activity_all <- arrange(activity_all,date,interval)
 ```
 
-Make a histogram of the total number of steps taken each day.
+Make a histogram of the total number of steps taken each day now that the missing values have been filled in.
 
 
 ```r
 activity_all <- group_by(activity_all,date)
 act_per_day2 <- summarize(activity_all,steps_per_day = sum(steps))
-hist(act_per_day2$steps_per_day)
+hist(act_per_day2$steps_per_day,main="Histogram of Total Steps per Day (Missing Values Replaced)",xlab = "Total Steps per Day")
 ```
 
-![](PA1_template_files/figure-html/second_hist-1.png) 
+![plot of chunk second_hist](figure/second_hist-1.png) 
 
 Calculate and report the mean and median total number of steps taken per day.
 
 
 ```r
-mean(act_per_day2$steps_per_day)
+mn2 <- mean(act_per_day2$steps_per_day)
+med2 <- median(act_per_day2$steps_per_day)
 ```
 
-```
-## [1] 10765.64
-```
+The mean steps per day (now that missing values have been filled in) is 1.0765639 &times; 10<sup>4</sup>.
+The median steps per day (now that missing values have been filled in) is 10762.
 
-```r
-median(act_per_day2$steps_per_day)
-```
-
-```
-## [1] 10762
-```
 
 Calculate the impact of imputing missing data on the estimates of the total daily number of steps by comparing with the previous means and medians we calculated.
 
 
 ```r
-mean(act_per_day2$steps_per_day) - mean(act_per_day$steps_per_day)
+diffmean <- mn2-mn
+diffmed <- med2 - med
 ```
 
-```
-## [1] -0.549335
-```
+The difference in the means by filling in missing values is -0.549335. 
+The difference in the medians by filling in missing values is -3
 
-```r
-median(act_per_day2$steps_per_day) - median(act_per_day$steps_per_day)
-```
-
-```
-## [1] -3
-```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -204,5 +167,5 @@ activity_weekend <- summarize(activity_all,steps = mean(steps))
 xyplot(steps~interval|weekend,activity_weekend,type="l")
 ```
 
-![](PA1_template_files/figure-html/second_time_series-1.png) 
+![plot of chunk second_time_series](figure/second_time_series-1.png) 
 
